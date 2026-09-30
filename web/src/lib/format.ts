@@ -44,6 +44,7 @@ export function directionOf(value: number | null): Direction {
 export function sourceLabel(source: string) {
   if (source === 'bcb_ptax') return 'BCB PTAX'
   if (source === 'bcb_sgs') return 'BCB SGS'
+  if (source === 'ipeadata') return 'IPEADATA'
   return 'FRED'
 }
 

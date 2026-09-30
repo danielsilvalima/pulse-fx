@@ -59,6 +59,7 @@ export class IndicatorSync {
   private fetchPoints(indicator: Indicator, start: DateTime, end: DateTime): Promise<Point[]> {
     if (indicator.source === 'bcb_ptax') return this.clients.ptax(indicator.externalId, start, end)
     if (indicator.source === 'bcb_sgs') return this.clients.sgs(indicator.externalId, start)
+    if (indicator.source === 'ipeadata') return this.clients.ipeadata(indicator.externalId, start)
     return this.clients.fred(indicator.externalId, start)
   }
 

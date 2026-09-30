@@ -50,6 +50,30 @@ export function parseSgsPayload(payload: unknown): Point[] {
   return points.sort((a, b) => a.date.localeCompare(b.date))
 }
 
+function calendarDate(value: unknown): string | null {
+  if (typeof value !== 'string') return null
+  const iso = /^(\d{4}-\d{2}-\d{2})/.exec(value)
+  if (iso) return iso[1]
+  const ticks = /^\/Date\((-?\d+)\)\/$/.exec(value)
+  if (!ticks) return null
+  const date = new Date(Number(ticks[1]))
+  if (Number.isNaN(date.getTime())) return null
+  return date.toISOString().slice(0, 10)
+}
+
+export function parseIpeadataPayload(payload: unknown): Point[] {
+  const byDate = new Map<string, number>()
+  for (const row of rowsOf(payload, 'value')) {
+    const date = calendarDate(row.VALDATA)
+    const value = parseNumber(row.VALVALOR)
+    if (!date || value === null) continue
+    byDate.set(date, value)
+  }
+  return [...byDate.entries()]
+    .map(([date, value]) => ({ date, value }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+}
+
 export function parseFredPayload(payload: unknown): Point[] {
   const points: Point[] = []
   for (const row of rowsOf(payload, 'observations')) {

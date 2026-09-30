@@ -1,5 +1,10 @@
 import { test } from '@japa/runner'
-import { parseFredPayload, parsePtaxPayload, parseSgsPayload } from '#services/series_parsers'
+import {
+  parseFredPayload,
+  parseIpeadataPayload,
+  parsePtaxPayload,
+  parseSgsPayload,
+} from '#services/series_parsers'
 
 test.group('series parsers', () => {
   test('keeps the last PTAX bulletin of each day', ({ assert }) => {
@@ -35,5 +40,19 @@ test.group('series parsers', () => {
       ],
     })
     assert.deepEqual(points, [{ date: '2026-02-01', value: 4.33 }])
+  })
+
+  test('reads Ipeadata monthly dates and drops empty values', ({ assert }) => {
+    const points = parseIpeadataPayload({
+      value: [
+        { VALDATA: '2024-11-01T00:00:00-03:00', VALVALOR: 163.54 },
+        { VALDATA: '2024-12-01T00:00:00-03:00', VALVALOR: null },
+        { VALDATA: '2024-10-01T00:00:00-03:00', VALVALOR: 161.35 },
+      ],
+    })
+    assert.deepEqual(points, [
+      { date: '2024-10-01', value: 161.35 },
+      { date: '2024-11-01', value: 163.54 },
+    ])
   })
 })

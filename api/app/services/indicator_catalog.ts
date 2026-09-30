@@ -1,6 +1,6 @@
 export type Frequency = 'daily' | 'monthly'
 export type Unit = 'brl' | 'percent' | 'index'
-export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred'
+export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred' | 'ipeadata'
 
 export type CatalogItem = {
   code: string
@@ -113,5 +113,21 @@ export const CATALOG: CatalogItem[] = [
     variationLag: 12,
     ttlHours: 24,
     sortOrder: 6,
+  },
+  {
+    code: 'real-effective',
+    name: 'Câmbio real efetivo',
+    source: 'ipeadata',
+    frequency: 'monthly',
+    externalId: 'PAN12_TCERXTINPC12',
+    unit: 'index',
+    summary:
+      'Índice da taxa de câmbio efetiva real das exportações, deflacionado pelo INPC (média 2010 = 100). Mede o real contra uma cesta de parceiros, não a cotação PTAX de um dia.',
+    limitations:
+      'Série mensal do Ipeadata. O Ipea inativou a atualização; o último número oficial publicado é dezembro de 2024. Mês sem publicação usa o último valor oficial anterior, sem interpolar.',
+    historyLimit: 36,
+    variationLag: 12,
+    ttlHours: 24,
+    sortOrder: 7,
   },
 ]

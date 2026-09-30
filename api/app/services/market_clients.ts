@@ -1,7 +1,12 @@
 import { type DateTime } from 'luxon'
 import env from '#start/env'
 import type { Point } from '#services/variation_rules'
-import { parseFredPayload, parsePtaxPayload, parseSgsPayload } from '#services/series_parsers'
+import {
+  parseFredPayload,
+  parseIpeadataPayload,
+  parsePtaxPayload,
+  parseSgsPayload,
+} from '#services/series_parsers'
 
 const TIMEOUT_MS = 20_000
 
@@ -36,6 +41,16 @@ export class MarketClients {
     url.searchParams.set('file_type', 'json')
     url.searchParams.set('observation_start', start.toISODate() ?? '2000-01-01')
     return parseFredPayload(await this.readJson(url))
+  }
+
+  async ipeadata(seriesCode: string, start: DateTime): Promise<Point[]> {
+    const url = `https://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='${seriesCode}')`
+    return this.fromDate(parseIpeadataPayload(await this.readJson(url)), start)
+  }
+
+  private fromDate(points: Point[], start: DateTime): Point[] {
+    const from = start.toISODate() ?? '1900-01-01'
+    return points.filter((point) => point.date >= from)
   }
 
   private async readJson(url: string | URL): Promise<unknown> {
