@@ -74,6 +74,19 @@ export function parseIpeadataPayload(payload: unknown): Point[] {
     .sort((a, b) => a.date.localeCompare(b.date))
 }
 
+export function parseWorldBankPayload(payload: unknown): Point[] {
+  if (!Array.isArray(payload) || !Array.isArray(payload[1])) return []
+  const points: Point[] = []
+  for (const row of payload[1]) {
+    const record = asRecord(row)
+    if (!record || typeof record.date !== 'string' || !/^\d{4}$/.test(record.date)) continue
+    const value = parseNumber(record.value)
+    if (value === null) continue
+    points.push({ date: `${record.date}-01-01`, value })
+  }
+  return points.sort((a, b) => a.date.localeCompare(b.date))
+}
+
 export function parseFredPayload(payload: unknown): Point[] {
   const points: Point[] = []
   for (const row of rowsOf(payload, 'observations')) {

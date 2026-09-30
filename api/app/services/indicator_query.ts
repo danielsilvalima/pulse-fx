@@ -6,6 +6,7 @@ import {
   roundPercent,
   variationFromMonths,
   variationFromPrints,
+  variationFromYears,
   type Point,
 } from '#services/variation_rules'
 
@@ -14,7 +15,9 @@ function present(indicator: Indicator, points: Point[], favorite: boolean) {
   const variation =
     indicator.frequency === 'daily'
       ? variationFromPrints(points, indicator.variationLag)
-      : variationFromMonths(points, indicator.variationLag)
+      : indicator.frequency === 'yearly'
+        ? variationFromYears(points, indicator.variationLag)
+        : variationFromMonths(points, indicator.variationLag)
   const history = points.slice(-indicator.historyLimit)
 
   return {

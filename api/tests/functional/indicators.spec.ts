@@ -35,6 +35,9 @@ test.group('indicators http', (group) => {
     const list = await client.get('/indicators')
     list.assertStatus(200)
     const card = list.body().data.find((item: { code: string }) => item.code === 'usd-brl')
+    if (!card || card.variationPercent === null) {
+      throw new Error('expected the dollar card')
+    }
     assert.closeTo(card.variationPercent, 10, 0.0001)
     assert.equal(card.referenceDate, '2026-03-09')
   })

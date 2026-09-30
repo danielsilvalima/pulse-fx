@@ -1,5 +1,10 @@
 import { test } from '@japa/runner'
-import { relativeChange, variationFromMonths, variationFromPrints } from '#services/variation_rules'
+import {
+  relativeChange,
+  variationFromMonths,
+  variationFromPrints,
+  variationFromYears,
+} from '#services/variation_rules'
 
 test.group('variation rules', () => {
   test('compares the last daily print with five available prints earlier', ({ assert }) => {
@@ -36,6 +41,16 @@ test.group('variation rules', () => {
     const variation = variationFromMonths(points, 12)
     assert.equal(variation?.base.date, '2025-01-15')
     assert.equal(variation?.current.value, 14)
+  })
+
+  test('uses the previous published year when the exact year is missing', ({ assert }) => {
+    const points = [
+      { date: '2022-01-01', value: 3 },
+      { date: '2024-01-01', value: 3.3 },
+    ]
+    const variation = variationFromYears(points, 1)
+    assert.equal(variation?.base.date, '2022-01-01')
+    assert.equal(variation?.current.date, '2024-01-01')
   })
 
   test('returns null when the base value is zero', ({ assert }) => {

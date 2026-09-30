@@ -4,6 +4,7 @@ import {
   parseIpeadataPayload,
   parsePtaxPayload,
   parseSgsPayload,
+  parseWorldBankPayload,
 } from '#services/series_parsers'
 
 test.group('series parsers', () => {
@@ -53,6 +54,21 @@ test.group('series parsers', () => {
     assert.deepEqual(points, [
       { date: '2024-10-01', value: 161.35 },
       { date: '2024-11-01', value: 163.54 },
+    ])
+  })
+
+  test('reads World Bank years and drops null observations', ({ assert }) => {
+    const points = parseWorldBankPayload([
+      { page: 1 },
+      [
+        { date: '2024', value: null },
+        { date: '2023', value: 3.2 },
+        { date: '2022', value: 3 },
+      ],
+    ])
+    assert.deepEqual(points, [
+      { date: '2022-01-01', value: 3 },
+      { date: '2023-01-01', value: 3.2 },
     ])
   })
 })

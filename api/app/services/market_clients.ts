@@ -6,6 +6,7 @@ import {
   parseIpeadataPayload,
   parsePtaxPayload,
   parseSgsPayload,
+  parseWorldBankPayload,
 } from '#services/series_parsers'
 
 const TIMEOUT_MS = 20_000
@@ -46,6 +47,13 @@ export class MarketClients {
   async ipeadata(seriesCode: string, start: DateTime): Promise<Point[]> {
     const url = `https://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='${seriesCode}')`
     return this.fromDate(parseIpeadataPayload(await this.readJson(url)), start)
+  }
+
+  async worldBank(indicatorId: string, start: DateTime): Promise<Point[]> {
+    const url = new URL(`https://api.worldbank.org/v2/country/BR/indicator/${indicatorId}`)
+    url.searchParams.set('format', 'json')
+    url.searchParams.set('per_page', '40')
+    return this.fromDate(parseWorldBankPayload(await this.readJson(url)), start)
   }
 
   private fromDate(points: Point[], start: DateTime): Point[] {

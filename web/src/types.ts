@@ -1,6 +1,6 @@
-export type Frequency = 'daily' | 'monthly'
+export type Frequency = 'daily' | 'monthly' | 'yearly'
 export type Unit = 'brl' | 'percent' | 'index'
-export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred' | 'ipeadata'
+export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred' | 'ipeadata' | 'world_bank'
 
 export type IndicatorCard = {
   code: string

@@ -45,10 +45,18 @@ export function sourceLabel(source: string) {
   if (source === 'bcb_ptax') return 'BCB PTAX'
   if (source === 'bcb_sgs') return 'BCB SGS'
   if (source === 'ipeadata') return 'IPEADATA'
+  if (source === 'world_bank') return 'World Bank'
   return 'FRED'
 }
 
 export function lagLabel(frequency: string, lag: number) {
   if (frequency === 'daily') return `${lag} pregões com dado`
+  if (frequency === 'yearly') return lag === 1 ? '1 ano' : `${lag} anos`
   return `${lag} meses`
+}
+
+export function historyCadence(frequency: string) {
+  if (frequency === 'daily') return 'diários'
+  if (frequency === 'yearly') return 'anuais'
+  return 'mensais'
 }

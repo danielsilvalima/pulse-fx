@@ -44,6 +44,25 @@ export function variationFromMonths(points: Point[], months: number): Variation 
   return { current, base, percent }
 }
 
+export function variationFromYears(points: Point[], years: number): Variation | null {
+  if (years < 1 || points.length === 0) return null
+  const current = points[points.length - 1]
+  const currentDate = DateTime.fromISO(current.date, { zone: 'utc' })
+  if (!currentDate.isValid) return null
+  const target = currentDate.minus({ years }).toISODate()
+  if (!target) return null
+
+  let base: Point | null = null
+  for (const point of points) {
+    if (point.date <= target) base = point
+    else break
+  }
+  if (!base || base.date === current.date) return null
+  const percent = relativeChange(current.value, base.value)
+  if (percent === null) return null
+  return { current, base, percent }
+}
+
 export function roundPercent(value: number): number {
   return Math.round(value * 10000) / 10000
 }

@@ -1,6 +1,6 @@
-export type Frequency = 'daily' | 'monthly'
+export type Frequency = 'daily' | 'monthly' | 'yearly'
 export type Unit = 'brl' | 'percent' | 'index'
-export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred' | 'ipeadata'
+export type Source = 'bcb_ptax' | 'bcb_sgs' | 'fred' | 'ipeadata' | 'world_bank'
 
 export type CatalogItem = {
   code: string
@@ -129,5 +129,21 @@ export const CATALOG: CatalogItem[] = [
     variationLag: 12,
     ttlHours: 24,
     sortOrder: 7,
+  },
+  {
+    code: 'br-gdp-growth',
+    name: 'PIB do Brasil',
+    source: 'world_bank',
+    frequency: 'yearly',
+    externalId: 'NY.GDP.MKTP.KD.ZG',
+    unit: 'percent',
+    summary:
+      'Crescimento anual do PIB real do Brasil, em percentual. Situa o câmbio num ciclo de atividade, sem virar cotação nem meta de juros.',
+    limitations:
+      'Frequência anual. A variação compara o último ano publicado com o ano anterior que já tem número. Ano ausente usa o último ano oficial anterior. Valores nulos da API são descartados.',
+    historyLimit: 10,
+    variationLag: 1,
+    ttlHours: 24,
+    sortOrder: 8,
   },
 ]

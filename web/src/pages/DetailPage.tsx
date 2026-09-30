@@ -8,6 +8,7 @@ import {
   formatDate,
   formatValue,
   formatVariation,
+  historyCadence,
   lagLabel,
   sourceLabel,
 } from '../lib/format'
@@ -83,7 +84,7 @@ export function DetailPage() {
           <section className="border border-line bg-card p-4">
             <h2 className="font-serif text-2xl text-navy">Histórico</h2>
             <p className="mt-1 text-sm text-muted">
-              Últimos {item.historyLimit} pontos {item.frequency === 'daily' ? 'diários' : 'mensais'}.
+              Últimos {item.historyLimit} pontos {historyCadence(item.frequency)}.
             </p>
             <div className="mt-4">
               <Sparkline values={item.history.map((point) => point.value)} />

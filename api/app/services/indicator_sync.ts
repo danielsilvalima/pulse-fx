@@ -39,7 +39,11 @@ export class IndicatorSync {
 
     const end = DateTime.utc().startOf('day')
     const start =
-      indicator.frequency === 'daily' ? end.minus({ days: 200 }) : end.minus({ months: 60 })
+      indicator.frequency === 'daily'
+        ? end.minus({ days: 200 })
+        : indicator.frequency === 'yearly'
+          ? end.minus({ years: 15 })
+          : end.minus({ months: 60 })
 
     try {
       const points = await this.fetchPoints(indicator, start, end)
@@ -60,6 +64,9 @@ export class IndicatorSync {
     if (indicator.source === 'bcb_ptax') return this.clients.ptax(indicator.externalId, start, end)
     if (indicator.source === 'bcb_sgs') return this.clients.sgs(indicator.externalId, start)
     if (indicator.source === 'ipeadata') return this.clients.ipeadata(indicator.externalId, start)
+    if (indicator.source === 'world_bank') {
+      return this.clients.worldBank(indicator.externalId, start)
+    }
     return this.clients.fred(indicator.externalId, start)
   }
 
