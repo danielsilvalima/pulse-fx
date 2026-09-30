@@ -8,18 +8,7 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class AuthAccessTokenSchema extends BaseModel {
-  static $columns = [
-    'abilities',
-    'createdAt',
-    'expiresAt',
-    'hash',
-    'id',
-    'lastUsedAt',
-    'name',
-    'tokenableId',
-    'type',
-    'updatedAt',
-  ] as const
+  static $columns = ['abilities', 'createdAt', 'expiresAt', 'hash', 'id', 'lastUsedAt', 'name', 'tokenableId', 'type', 'updatedAt'] as const
   $columns = AuthAccessTokenSchema.$columns
   @column()
   declare abilities: string
@@ -43,6 +32,75 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class FavoriteSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'indicatorId', 'viewerId'] as const
+  $columns = FavoriteSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare indicatorId: number
+  @column()
+  declare viewerId: string
+}
+
+export class IndicatorSchema extends BaseModel {
+  static $columns = ['code', 'createdAt', 'externalId', 'frequency', 'historyLimit', 'id', 'lastSyncError', 'lastSyncedAt', 'limitations', 'name', 'sortOrder', 'source', 'summary', 'ttlHours', 'unit', 'updatedAt', 'variationLag'] as const
+  $columns = IndicatorSchema.$columns
+  @column()
+  declare code: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare externalId: string
+  @column()
+  declare frequency: string
+  @column()
+  declare historyLimit: number
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare lastSyncError: string | null
+  @column.dateTime()
+  declare lastSyncedAt: DateTime | null
+  @column()
+  declare limitations: string
+  @column()
+  declare name: string
+  @column()
+  declare sortOrder: number
+  @column()
+  declare source: string
+  @column()
+  declare summary: string
+  @column()
+  declare ttlHours: number
+  @column()
+  declare unit: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare variationLag: number
+}
+
+export class ObservationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'indicatorId', 'observedOn', 'updatedAt', 'value'] as const
+  $columns = ObservationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare indicatorId: number
+  @column()
+  declare observedOn: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare value: string
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['createdAt', 'email', 'fullName', 'id', 'password', 'updatedAt'] as const
   $columns = UserSchema.$columns
@@ -58,4 +116,13 @@ export class UserSchema extends BaseModel {
   declare password: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+}
+
+export class ViewerSchema extends BaseModel {
+  static $columns = ['createdAt', 'id'] as const
+  $columns = ViewerSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: string
 }

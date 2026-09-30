@@ -42,6 +42,18 @@ O Compose repassa `FRED_API_KEY` para a API. Sem a chave, dólar, euro, IPCA e S
 
 O modelo do backend está em `api/.env.example`.
 
+## API sem Docker
+
+Com o Postgres do Compose no ar:
+
+```bash
+cd api
+npm install
+npm run dev
+```
+
+Ao subir o servidor HTTP, a API aplica sozinha as migrations pendentes e só depois sincroniza as séries. Não há passo manual de migration.
+
 ## Front sem Docker
 
 Com a API em http://localhost:3333:

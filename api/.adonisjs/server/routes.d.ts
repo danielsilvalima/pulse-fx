@@ -4,21 +4,26 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
-    'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
+    'indicators.index': { paramsTuple?: []; params?: {} }
+    'indicators.show': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
+    'viewers.store': { paramsTuple?: []; params?: {} }
+    'viewers.update': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'code': ParamValue} }
+    'sync.store': { paramsTuple?: []; params?: {} }
   }
   GET: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'indicators.index': { paramsTuple?: []; params?: {} }
+    'indicators.show': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
   }
   HEAD: {
-    'profile.profile.show': { paramsTuple?: []; params?: {} }
+    'indicators.index': { paramsTuple?: []; params?: {} }
+    'indicators.show': { paramsTuple: [ParamValue]; params: {'code': ParamValue} }
   }
   POST: {
-    'auth.new_account.store': { paramsTuple?: []; params?: {} }
-    'auth.access_tokens.store': { paramsTuple?: []; params?: {} }
-    'profile.access_tokens.destroy': { paramsTuple?: []; params?: {} }
+    'viewers.store': { paramsTuple?: []; params?: {} }
+    'sync.store': { paramsTuple?: []; params?: {} }
+  }
+  PUT: {
+    'viewers.update': { paramsTuple: [ParamValue,ParamValue]; params: {'id': ParamValue,'code': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {
