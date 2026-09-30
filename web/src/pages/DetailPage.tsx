@@ -87,26 +87,9 @@ export function DetailPage() {
               Últimos {item.historyLimit} pontos {historyCadence(item.frequency)}.
             </p>
             <div className="mt-4">
-              <Sparkline values={item.history.map((point) => point.value)} />
+              <Sparkline points={item.history} unit={item.unit} />
             </div>
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-muted">
-                  <tr>
-                    <th className="py-2 font-medium">Data</th>
-                    <th className="py-2 text-right font-medium">Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...item.history].reverse().map((point) => (
-                    <tr key={point.date} className="border-t border-line">
-                      <td className="py-2 tabular-nums">{formatDate(point.date)}</td>
-                      <td className="py-2 text-right tabular-nums">{formatValue(point.value, item.unit)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <HistoryTable key={item.code} item={item} />
           </section>
           <section className="border border-line px-4 py-4">
             <h2 className="font-serif text-2xl text-navy">Limitações dos dados</h2>
@@ -116,6 +99,46 @@ export function DetailPage() {
             )}
           </section>
         </>
+      )}
+    </div>
+  )
+}
+
+function HistoryTable({ item }: { item: IndicatorDetail }) {
+  const [showAll, setShowAll] = useState(false)
+  const newestFirst = [...item.history].reverse()
+  const preview = 12
+  const rows = showAll ? newestFirst : newestFirst.slice(0, preview)
+  const hidden = newestFirst.length - preview
+
+  return (
+    <div className="mt-4">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm">
+          <thead className="text-muted">
+            <tr>
+              <th className="py-2 font-medium">Data</th>
+              <th className="py-2 text-right font-medium">Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((point) => (
+              <tr key={point.date} className="border-t border-line">
+                <td className="py-2 tabular-nums">{formatDate(point.date)}</td>
+                <td className="py-2 text-right tabular-nums">{formatValue(point.value, item.unit)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {hidden > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((value) => !value)}
+          className="mt-3 cursor-pointer border border-navy bg-card px-3 py-2 text-sm text-navy transition-colors hover:bg-navy hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy"
+        >
+          {showAll ? 'Mostrar só os 12 mais recentes' : `Ver tabela completa (${hidden} a mais)`}
+        </button>
       )}
     </div>
   )

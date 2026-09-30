@@ -6,6 +6,12 @@ import { directionOf, formatDate, formatValue, formatVariation, lagLabel, source
 import { viewerId } from '../lib/viewer'
 import type { IndicatorCard as Indicator } from '../types'
 
+function topicOf(frequency: string) {
+  if (frequency === 'daily') return 'Câmbio diário'
+  if (frequency === 'yearly') return 'Anual'
+  return 'Macro mensal'
+}
+
 export function DashboardPage() {
   const [items, setItems] = useState<Indicator[]>([])
   const [profileId, setProfileId] = useState<string | null>(null)
@@ -67,7 +73,11 @@ export function DashboardPage() {
           type="button"
           aria-pressed={onlyFavorites}
           onClick={() => setOnlyFavorites((value) => !value)}
-          className="border border-navy bg-navy px-3 py-2 text-sm text-paper"
+          className={`cursor-pointer border border-navy px-3 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${
+            onlyFavorites
+              ? 'bg-paper text-navy hover:bg-navy hover:text-paper'
+              : 'bg-navy text-paper hover:bg-paper hover:text-navy'
+          }`}
         >
           {onlyFavorites ? 'Ver todos' : 'Meus indicadores'}
         </button>
@@ -75,28 +85,36 @@ export function DashboardPage() {
       <Disclaimer />
       {loading && <p className="text-sm text-muted">Carregando indicadores.</p>}
       {error && <p className="text-sm text-down">{error}</p>}
-      {!loading && visible.length === 0 && (
+      {!loading && items.length === 0 && (
         <p className="border border-dashed border-line px-4 py-8 text-sm text-muted">
-          Nenhum indicador salvo ainda. Marque um card para montar a sua lista.
+          Nenhum indicador gravado ainda.
         </p>
       )}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {visible.map((item) => (
-          <IndicatorCard
-            key={item.code}
-            name={item.name}
-            sourceLabel={sourceLabel(item.source)}
-            valueLabel={formatValue(item.latestValue, item.unit)}
-            referenceLabel={formatDate(item.referenceDate)}
-            variationLabel={formatVariation(item.variationPercent)}
-            lagLabel={lagLabel(item.frequency, item.variationLag)}
-            direction={directionOf(item.variationPercent)}
-            favorite={item.favorite}
-            href={`/indicadores/${item.code}`}
-            onToggleFavorite={() => toggleFavorite(item)}
-          />
-        ))}
-      </div>
+      {!loading && onlyFavorites && items.length > 0 && visible.length === 0 && (
+        <p className="border border-dashed border-line px-4 py-8 text-sm text-muted">
+          Nenhum indicador marcado. Use Salvar em um card para montar a lista.
+        </p>
+      )}
+      {visible.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {visible.map((item) => (
+            <IndicatorCard
+              key={item.code}
+              topic={topicOf(item.frequency)}
+              name={item.name}
+              sourceLabel={sourceLabel(item.source)}
+              valueLabel={formatValue(item.latestValue, item.unit)}
+              referenceLabel={formatDate(item.referenceDate)}
+              variationLabel={formatVariation(item.variationPercent)}
+              lagLabel={lagLabel(item.frequency, item.variationLag)}
+              direction={directionOf(item.variationPercent)}
+              favorite={item.favorite}
+              href={`/indicadores/${item.code}`}
+              onToggleFavorite={() => toggleFavorite(item)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

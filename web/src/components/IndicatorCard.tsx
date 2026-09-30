@@ -9,6 +9,7 @@ const variationColor: Record<Direction, string> = {
 }
 
 type IndicatorCardProps = {
+  topic?: string
   name: string
   sourceLabel: string
   valueLabel: string
@@ -22,6 +23,7 @@ type IndicatorCardProps = {
 }
 
 export function IndicatorCard({
+  topic,
   name,
   sourceLabel,
   valueLabel,
@@ -37,7 +39,8 @@ export function IndicatorCard({
     <article className="flex h-full flex-col border border-line bg-card">
       <div className="flex items-start justify-between gap-3 px-4 pt-4">
         <div>
-          <p className="text-xs tracking-wide text-muted uppercase">{sourceLabel}</p>
+          {topic && <p className="text-xs tracking-wide text-muted uppercase">{topic}</p>}
+          <p className={`text-xs text-muted ${topic ? 'mt-1' : 'tracking-wide uppercase'}`}>{sourceLabel}</p>
           <h2 className="mt-1 font-serif text-2xl leading-tight text-navy">
             <Link to={href} className="hover:underline">
               {name}
@@ -49,7 +52,11 @@ export function IndicatorCard({
           aria-pressed={favorite}
           aria-label={favorite ? `Remover ${name} dos favoritos` : `Marcar ${name} como favorito`}
           onClick={onToggleFavorite}
-          className="border border-line px-2 py-1 text-sm text-navy"
+          className={`cursor-pointer border px-2 py-1 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy ${
+            favorite
+              ? 'border-navy bg-navy text-paper hover:bg-paper hover:text-navy'
+              : 'border-line bg-card text-navy hover:border-navy hover:bg-navy hover:text-paper'
+          }`}
         >
           {favorite ? 'Salvo' : 'Salvar'}
         </button>
