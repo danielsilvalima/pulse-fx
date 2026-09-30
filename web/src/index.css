@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-serif: "Newsreader", serif;
+  --color-paper: #f3efe6;
+  --color-ink: #1b1914;
+  --color-navy: #1e3348;
+  --color-line: #ddd6c8;
+  --color-up: #1d6b45;
+  --color-down: #9d3a2f;
+  --color-muted: #5e584e;
+  --color-card: #faf7f1;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
