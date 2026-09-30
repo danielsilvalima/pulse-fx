@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: pulse
+      POSTGRES_DB: pulse_fx
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulse -d pulse_fx"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: ./api
+    environment:
+      TZ: UTC
+      HOST: 0.0.0.0
+      PORT: 3333
+      NODE_ENV: production
+      LOG_LEVEL: info
+      APP_KEY: ${APP_KEY}
+      APP_URL: http://localhost:3333
+      SESSION_DRIVER: cookie
+      DB_CONNECTION: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: pulse
+      DB_PASSWORD: pulse
+      DB_DATABASE: pulse_fx
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      FRED_API_KEY: ${FRED_API_KEY:-}
+      CORS_ORIGIN: http://localhost:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3333:3333"
+
+  web:
+    build: ./web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
