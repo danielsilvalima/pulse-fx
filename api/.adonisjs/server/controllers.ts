@@ -4,10 +4,7 @@
  */
 
 export const controllers = {
-  AccessTokens: () => import('#controllers/access_tokens_controller'),
   Indicators: () => import('#controllers/indicators_controller'),
-  NewAccount: () => import('#controllers/new_account_controller'),
-  Profile: () => import('#controllers/profile_controller'),
   Sync: () => import('#controllers/sync_controller'),
   Viewers: () => import('#controllers/viewers_controller'),
 }
