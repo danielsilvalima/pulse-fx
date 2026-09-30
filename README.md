@@ -27,7 +27,7 @@ Para o FRED, peça uma chave em https://fredaccount.stlouisfed.org/apikeys e col
 FRED_API_KEY=sua-chave
 ```
 
-O Compose repassa `FRED_API_KEY` para a API. Sem a chave, dólar, euro, IPCA e Selic continuam. Fed funds e CPI dos EUA registram falha de sincronização até a chave existir.
+O Compose repassa `FRED_API_KEY` para a API. Sem a chave, dólar, euro, IPCA, Selic, câmbio real efetivo e PIB do Brasil continuam. Fed funds e CPI dos EUA registram falha de sincronização até a chave existir.
 
 ## Variáveis
 
@@ -94,7 +94,7 @@ A suíte da API sobe o HTTP contra o banco `pulse_fx_test` no PostgreSQL do Comp
 
 ## Séries
 
-Duas fontes: Banco Central do Brasil e FRED. IPEADATA e World Bank ficaram de fora.
+Duas fontes obrigatórias, Banco Central do Brasil e FRED, e duas opcionais, Ipeadata e World Bank.
 
 **Dólar PTAX** (`USD`, diário). Cotação de venda do último boletim de cada dia útil na API Olinda do Banco Central. É o fechamento do câmbio comercial em real, a referência de contratos e do noticiário. Fim de semana, feriado e dia sem boletim ficam de fora, sem valor inventado. A variação compara esse fechamento com o quinto pregão anterior que já está salvo.  
 https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/swagger-ui3/
@@ -114,6 +114,12 @@ https://fred.stlouisfed.org/docs/api/fred/
 **CPI dos EUA** (`CPIAUCSL`, mensal). Índice de preços ao consumidor americano, já ajustado no FRED. Mostra a inflação de lá, outro fator externo do câmbio. A série é um índice, não um percentual pronto. A variação em 12 meses aproxima a inflação anual a partir desse índice. Também depende da chave do FRED.  
 https://fred.stlouisfed.org/docs/api/fred/
 
+**Câmbio real efetivo** (`PAN12_TCERXTINPC12`, mensal). Índice Ipeadata da taxa de câmbio efetiva real das exportações, deflacionado pelo INPC, média 2010 = 100. Mede o real contra uma cesta de parceiros comerciais, então não repete a PTAX de um dia nem o IPCA. A variação compara com 12 meses antes. Mês sem publicação usa o último número oficial anterior, sem interpolar. O Ipea inativou a atualização; o último valor publicado é dezembro de 2024.  
+http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='PAN12_TCERXTINPC12')
+
+**PIB do Brasil** (`NY.GDP.MKTP.KD.ZG`, anual). Crescimento do PIB real brasileiro, em percentual, no World Bank Open Data, país BR. Entra para situar o câmbio num ciclo de atividade, não como cotação. A variação compara o último ano publicado com o ano anterior que já tem número. Ano ausente usa o último ano oficial anterior. Valores nulos da API são descartados. A janela guardada cobre cerca de 15 anos; a tela mostra 10.  
+https://api.worldbank.org/v2/country/BR/indicator/NY.GDP.MKTP.KD.ZG?format=json
+
 ## Variação e histórico
 
 Último valor é a observação válida mais recente gravada. A data de referência é a data dessa observação, não o horário da consulta.
@@ -122,17 +128,18 @@ Fórmula, igual no painel e no detalhe: `(atual - base) / base * 100`. Se a base
 
 - **Diário:** base = quinto boletim anterior que existe na base. N = 5, uma semana de pregões. Fim de semana, feriado e dia sem boletim não ganham valor interpolado.
 - **Mensal:** base = nível vigente 12 meses antes da data atual. N = 12. Se não houve publicação naquele mês, vale o último número oficial anterior. Isso cobre a Selic, que fica parada entre reuniões. Não se usa janela de dias numa série mensal.
+- **Anual:** base = nível vigente 1 ano antes da data atual. N = 1. Se aquele ano não veio na API, vale o último ano oficial anterior. Não se interpola o intervalo.
 
-Histórico exibido: 90 pontos no diário e 36 no mensal. A variação pode usar um ponto anterior a essa janela, se ele já estiver salvo.
+Histórico exibido: 90 pontos no diário, 36 no mensal e 10 no anual. A variação pode usar um ponto anterior a essa janela, se ele já estiver salvo.
 
-Séries que já são percentual (IPCA 12 meses, Selic, Fed funds) usam a mesma fórmula. O resultado é a variação relativa daquele nível, não ponto percentual novo.
+Séries que já são percentual (IPCA 12 meses, Selic, Fed funds, PIB do Brasil) usam a mesma fórmula. O resultado é a variação relativa daquele nível, não ponto percentual novo.
 
 ## Sincronização
 
-A tela não chama BCB nem FRED. Ela lê o banco.
+A tela não chama BCB, FRED, Ipeadata nem World Bank. Ela lê o banco.
 
-- Câmbio: cache de 6 horas
-- Macro: cache de 24 horas
+- Câmbio diário: cache de 6 horas
+- Macro mensal e anual: cache de 24 horas
 - Com a API no ar, um ciclo interno roda a cada 30 minutos e só busca o que venceu
 - `POST /admin/sync` com `x-admin-token` ignora o cache quando o corpo traz `"force": true`
 
