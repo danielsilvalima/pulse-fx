@@ -84,22 +84,22 @@ A suíte da API sobe o HTTP contra o banco `pulse_fx_test` no PostgreSQL do Comp
 
 Duas fontes: Banco Central do Brasil e FRED. IPEADATA e World Bank ficaram de fora.
 
-**Dólar PTAX** (`USD`, diário). Olinda, cotação de venda, último boletim do dia. É a referência de fechamento do câmbio comercial em real.  
+**Dólar PTAX** (`USD`, diário). Cotação de venda do último boletim de cada dia útil na API Olinda do Banco Central. É o fechamento do câmbio comercial em real, a referência de contratos e do noticiário. Fim de semana, feriado e dia sem boletim ficam de fora, sem valor inventado. A variação compara esse fechamento com o quinto pregão anterior que já está salvo.  
 https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/swagger-ui3/
 
-**Euro PTAX** (`EUR`, diário). A mesma PTAX, para ver o real contra a outra moeda líquida do mercado local.  
+**Euro PTAX** (`EUR`, diário). A mesma PTAX de venda, para a outra moeda líquida do mercado local. Serve para ver se o movimento do real é específico do dólar ou aparece também contra o euro. Vale a mesma regra de calendário e o mesmo intervalo de cinco pregões.  
 https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/swagger-ui3/
 
-**IPCA 12 meses** (SGS `13522`, mensal). Inflação oficial acumulada, o número que se lê junto com o câmbio.  
+**IPCA 12 meses** (SGS `13522`, mensal). Inflação oficial acumulada, o número que se lê junto com o câmbio para entender o poder de compra do real. A série já vem em percentual. A variação do painel compara esse nível com o de 12 meses antes e não recalcula o índice. Mês sem publicação usa o último número oficial anterior.  
 https://www3.bcb.gov.br/sgspub/
 
-**Meta Selic** (SGS `432`, tratada como mensal). Custo básico do dinheiro no Brasil. A série muda na reunião do Copom, não em todo mês.  
+**Meta Selic** (SGS `432`, tratada como mensal). Meta do Copom, o custo básico do dinheiro no Brasil, que costuma andar junto com o câmbio. A série muda na reunião, não em todo mês. Entre reuniões permanece a última meta. A comparação usa o nível vigente 12 meses antes, sem preencher o intervalo.  
 https://www3.bcb.gov.br/sgspub/
 
-**Fed funds** (`FEDFUNDS`, mensal). Juro efetivo dos Estados Unidos no FRED. Entra porque o diferencial de juros mexe no dólar.  
+**Fed funds** (`FEDFUNDS`, mensal). Taxa efetiva dos Estados Unidos no FRED, média mensal. Entra porque o diferencial de juros com o Brasil mexe no dólar. O valor já vem em percentual ao ano. A variação compara com 12 meses antes. Sem `FRED_API_KEY`, esta série fica com falha de sincronização e as séries do Banco Central continuam.  
 https://fred.stlouisfed.org/docs/api/fred/
 
-**CPI dos EUA** (`CPIAUCSL`, mensal). Índice de preços americano já ajustado no FRED. A leitura em 12 meses aproxima a inflação de lá.  
+**CPI dos EUA** (`CPIAUCSL`, mensal). Índice de preços ao consumidor americano, já ajustado no FRED. Mostra a inflação de lá, outro fator externo do câmbio. A série é um índice, não um percentual pronto. A variação em 12 meses aproxima a inflação anual a partir desse índice. Também depende da chave do FRED.  
 https://fred.stlouisfed.org/docs/api/fred/
 
 ## Variação e histórico
